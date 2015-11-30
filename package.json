@@ -4,7 +4,9 @@
   "description": "A tiny step sequencer for web audio",
   "main": "index.js",
   "scripts": {
-    "test": "vows test/*.js"
+    "test": "vows test/*.js",
+    "dist": "browserify index.js | uglifyjs > dist/step-seq.min.js",
+    "disc": "browserify --full-paths index.js | uglifyjs | discify > tmp/disc.html"
   },
   "repository": {
     "type": "git",

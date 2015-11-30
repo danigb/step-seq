@@ -6,17 +6,25 @@ A tiny web audio step sequencer:
 var freq = require('note.freq')
 
 var ctx = new AudioContext()
-var sequencer = require('step-seq')
+var sequencer = require('step-seq')(ctx)
 
-sequencer = sequencer(ctx, function (note, time, duration) {
-  var osc = ctx.createOscillator();
+var sequence = sequencer(function (note, time, duration) {
+  var osc = ctx.createOscillator()
   osc.frequency.value = freq(note)
   osc.start(time)
   osc.stop(time + 0.8 * duration)
 })
 
-sequencer(100, ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'])
+sequence(100, ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5']).start()
 ```
+## API
+
+Only one function:
+
+#### sequencer(ctx, player, tempo, data)
+
+Create a sequence.
+
 
 ## Examples
 
