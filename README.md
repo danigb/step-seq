@@ -15,7 +15,7 @@ sequencer = sequencer(ctx, function (note, time, duration) {
   osc.stop(time + 0.8 * duration)
 })
 
-sequencer(100, ['C2', 'D3', 'F5'])
+sequencer(100, ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'])
 ```
 
 ## Example

@@ -8,15 +8,22 @@ function sequence (ctx, player, tempo, data) {
   var tickInterval = 60 / tempo
   var nextTick = ctx.currentTime + 0.1
   var tick = 0
-  console.log(tickInterval)
+  var array = Array.isArray(data) ? data : null
+  var max = array ? array.length : (data || 10)
+  var timer = null
 
-  setInterval(function () {
+  function stop () { clearInterval(timer) }
+
+  timer = setInterval(function () {
     var current = ctx.currentTime
     var ahead = current + tickInterval
     if (nextTick < ahead) {
+      player(array ? array[tick] : tick, nextTick, tickInterval)
       tick++
       nextTick += tickInterval
-      player(tick, nextTick, tickInterval)
     }
+    if (tick >= max) stop()
   }, tickInterval * 0.6)
+
+  return stop
 }
