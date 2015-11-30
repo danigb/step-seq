@@ -26,6 +26,7 @@
   "homepage": "https://github.com/danigb/step-seq#readme",
   "devDependencies": {
     "adsr": "^1.0.0",
+    "soundfont-player": "^0.5.0",
     "tonal.note": "0.0.1",
     "vows": "^0.8.1"
   },

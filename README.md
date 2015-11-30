@@ -18,9 +18,9 @@ sequencer = sequencer(ctx, function (note, time, duration) {
 sequencer(100, ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'])
 ```
 
-## Example
+## Examples
 
-To run the example `npm install -g beefy` then `beefy example.js` and navigate to http://localhost:9966/
+To run the example `npm install -g beefy` then `beefy examples/piano.js` and navigate to http://localhost:9966/
 
 ## License
 
