@@ -1,0 +1,33 @@
+{
+  "name": "step-seq",
+  "version": "0.0.1",
+  "description": "A tiny step sequencer for web audio",
+  "main": "index.js",
+  "scripts": {
+    "test": "vows test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danigb/step-seq.git"
+  },
+  "keywords": [
+    "sequencer",
+    "music",
+    "web",
+    "audio",
+    "waa",
+    "tempo"
+  ],
+  "author": "danigb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danigb/step-seq/issues"
+  },
+  "homepage": "https://github.com/danigb/step-seq#readme",
+  "devDependencies": {
+    "vows": "^0.8.1"
+  },
+  "dependencies": {
+    "curry": "^1.2.0"
+  }
+}
