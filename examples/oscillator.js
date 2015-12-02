@@ -1,4 +1,4 @@
-var sequencer = require('.')
+var sequencer = require('..')
 var freq = require('tonal.note/freq')(440)
 var ADSR = require('adsr')
 
@@ -24,7 +24,8 @@ var ctx = new window.AudioContext()
 var gain = ctx.createGain()
 gain.connect(ctx.destination)
 
-var seq = sequencer(ctx, function (note, time, duration) {
+var seq = sequencer(ctx, function (event, note, time, duration) {
+  if (event !== 'data') return
   console.log('play', note, freq(note), time, duration)
   var osc = ctx.createOscillator()
   osc.type = 'square'
@@ -40,4 +41,4 @@ var seq = sequencer(ctx, function (note, time, duration) {
   osc.stop(env.stop(time + 0.5 * duration))
 })
 
-seq(120, ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'])
+seq(['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5']).start()

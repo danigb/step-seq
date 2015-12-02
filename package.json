@@ -2,7 +2,7 @@
   "name": "step-seq",
   "version": "0.0.1",
   "description": "A tiny step sequencer for web audio",
-  "main": "index.js",
+  "main": "sequencer.js",
   "scripts": {
     "test": "vows test/*.js",
     "dist": "browserify index.js | uglifyjs > dist/step-seq.min.js",
@@ -28,8 +28,8 @@
   "homepage": "https://github.com/danigb/step-seq#readme",
   "devDependencies": {
     "adsr": "^1.0.0",
-    "soundfont-player": "^0.5.0",
-    "tonal.note": "0.0.1",
+    "soundfont-player": "^0.x.0",
+    "tonal.note": "0.0.x",
     "vows": "^0.8.1"
   },
   "dependencies": {

@@ -1,12 +1,14 @@
 var ctx = new window.AudioContext()
-var sequencer = require('..')(ctx)
 var soundfont = require('soundfont-player')(ctx)
+var sequencer = require('../')
 
-var piano = soundfont.instrument('acoustic_grand_piano')
-var sequence = sequencer(function (note, time, duration) {
-  piano.play(note, time)
-})
+console.log('loading piano')
 
-piano.onready(function () {
-  sequence(120, 'c3 d3 e3 f3 g3 a3 b3 c4'.split(' ')).start()
+soundfont.instrument('acoustic_grand_piano').onready(function (piano) {
+  console.log('ready', piano)
+  var sequence = sequencer(ctx, function (event, note, time, duration) {
+    var midi = 21 + note % 88
+    if (event === 'data') piano.play(midi, time)
+  })
+  sequence.tempo(60).start()
 })
