@@ -1,7 +1,5 @@
 'use strict'
 
-var curry = require('curry')
-
 /**
  * Create a sequence
  *
@@ -10,38 +8,89 @@ var curry = require('curry')
  * @param {AudioContext} ctx - the audio context
  * @param {Function} player - the function that plays the song
  * @param {Integer} tempo - the tempo
- * @param {Array|Integer} data - the data
+ * @param {Array|Integer} data - the data source
  */
-function sequencer (ctx, player, tempo, data) {
-  var timer, nextTick, tick
-  var tickInterval = 60 / tempo
-  var array = Array.isArray(data) ? data : null
-  var max = array ? array.length : (data || 10)
+function sequencer (ctx, callback) {
+  var timer, iterable, iterator, nextTick, tempo, tickInterval, lookahead
 
-  var seq = { tempo: tempo, data: data }
+  function emit (event, data, time, duration) {
+    setTimeout(function () { callback(event, data, time, duration) }, 0)
+  }
+
+  function sequence (data) {
+    if (!data) iterator = rangeIterator(0, Infinity)
+    else if (typeof data === 'function') iterator = data
+    else if (Math.floor(data) === data) iterator = rangeIterator(0, data)
+    else if (typeof data === 'string') iterator = arrayIterator(data.split(' '))
+    else if (Array.isArray(data)) iterator = arrayIterator(data)
+    else iterator = arrayIterator([ data ])
+    return sequence
+  }
+
+  sequence.tempo = function (newTempo) {
+    if (arguments.length === 0) return tempo
+    tempo = newTempo
+    tickInterval = 60 / tempo
+    lookahead = tickInterval * 0.3
+    return sequence
+  }
+
+  sequence.start = function () {
+    if (!timer) {
+      iterable = iterator()
+      nextTick = ctx.currentTime + lookahead
+      emit('start', null, nextTick)
+      timer = setInterval(schedule, lookahead)
+    }
+    return sequence
+  }
+
+  sequence.stop = function () {
+    if (timer) {
+      clearInterval(timer)
+      timer = null
+      emit('stop')
+    }
+    return sequence
+  }
 
   function schedule () {
-    var ahead = ctx.currentTime + tickInterval
-    if (nextTick < ahead) {
-      player(array ? array[tick] : tick, nextTick, tickInterval)
-      tick++
+    var current = ctx.currentTime
+    var ahead = current + lookahead
+    if (nextTick >= current && nextTick < ahead) {
+      var n = iterable.next()
+      if (n.done) {
+        sequence.stop()
+      } else {
+        callback('data', n.value, nextTick, tickInterval)
+      }
       nextTick += tickInterval
     }
-    if (tick >= max) seq.stop()
   }
 
-  seq.stop = function () {
-    clearInterval(timer)
-    return seq
-  }
-  seq.start = function () {
-    tick = 0
-    nextTick = ctx.currentTime + 0.1
-    timer = setInterval(schedule, tickInterval * 0.6)
-    return seq
-  }
-  return seq
+  return sequence().tempo(120)
 }
 
-if (typeof module === 'object' && module.exports) module.exports = curry(sequencer)
-if (typeof window !== 'undefined') window.sequencer = curry(sequencer)
+function rangeIterator (min, max) {
+  return function () {
+    var v = min - 1
+    return { next: function () {
+      v++
+      return { value: v, done: min >= max }
+    } }
+  }
+}
+
+function arrayIterator (arr) {
+  return function () {
+    var len = arr.length
+    var index = -1
+    return { next: function () {
+      index++
+      return { value: arr[index], done: index >= len }
+    } }
+  }
+}
+
+if (typeof module === 'object' && module.exports) module.exports = sequencer
+if (typeof window !== 'undefined') window.sequencer = sequencer

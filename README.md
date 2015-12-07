@@ -1,34 +1,79 @@
-# Step sequencer  
+# Step sequencer  [![npm](https://img.shields.io/npm/v/step-seq.svg)](https://www.npmjs.com/package/step-seq)
 
 A tiny web audio step sequencer:
 
 ```js
-var freq = require('note.freq')
-
-var ctx = new AudioContext()
 var sequencer = require('step-seq')
 
+var ctx = new AudioContext()
 var sequence = sequencer(ctx, function (event, data, time, duration) {
+  if (event !== 'data') return
   var osc = ctx.createOscillator()
-  osc.frequency.value = freq(note)
+  osc.connect(ctx.destination)
+  osc.frequency.value = data
   osc.start(time)
   osc.stop(time + 0.8 * duration)
 })
 
-sequence(['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5']).start()
+// run a sequence
+sequence([261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25]).start()
 ```
-## API
 
-Only one function:
+## Install
 
-#### sequencer(ctx, player, tempo, data)
+Via npm: `npm i --save step-seq` or use the browser based distribution (exports `sequencer` to the window globals)
 
-Create a sequence.
+## Usage
 
+Its just one function:
+
+#### `sequencer(ctx, scheduler)`
+
+Create a sequencer. A sequencer is a function that creates sequences:
+
+```js
+var sequence = sequencer(ctx, function (event, data, time, duration) {
+  if (event === 'start') { ... }
+  else if (event === 'stop') { ... }
+  else if (event === 'data') {
+    // play('something').at(time)
+  }
+})
+```
+
+The scheduler function receives the following parameters:
+
+- event: the event type. Can be 'start', 'stop', 'data'
+- data: the data payload (depends on the sequence data)
+- time: the time in the audio context reference
+- duration: the duration in seconds of each beat
+
+The returned sequence function has the following signature:
+
+#### `sequence(data)`
+
+Create a sequences. The data can be:
+
+- An array: iterates over the array
+- A number: iterates from 0 to n-1
+- A string: split it using spaces and iterate its elements
+- A function: a generator-type function
+- Nothing: iterates from 0 to Infinity
+
+```js
+var s = sequence('A B C D')
+s.tempo(100).start()
+```
+
+The sequence has the following (chainable) methods:
+
+- __`start(when)`__: starts the sequence when the audio context currentTime is `when`
+- __`stop(when)`__: stops the sequence when audio context currentTime is greater than `when`
+- __`tempo(newTempo)`__: set/get the sequence tempo
 
 ## Examples
 
-To run the example `npm install -g beefy` then `beefy examples/piano.js` and navigate to http://localhost:9966/
+To run the example `npm install -g beefy` and then `beefy example/oscillator.js`
 
 ## License
 
