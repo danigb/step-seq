@@ -29,7 +29,7 @@ Its just one function:
 
 #### `sequencer(ctx, scheduler)`
 
-Create a sequencer. A sequencer is a function that creates sequences:
+Create a sequencer with an scheduler:
 
 ```js
 var sequence = sequencer(ctx, function (event, data, time, duration) {
@@ -43,16 +43,16 @@ var sequence = sequencer(ctx, function (event, data, time, duration) {
 
 The scheduler function receives the following parameters:
 
-- event: the event type. Can be 'start', 'stop', 'data'
+- event: the event type. Can be 'start', 'stop' or 'data'
 - data: the data payload (depends on the sequence data)
 - time: the time in the audio context reference
 - duration: the duration in seconds of each beat
 
 The returned sequence function has the following signature:
 
-#### `sequence(data)`
+#### `sequence(source)`
 
-Create a sequences. The data can be:
+It creates sequence objects. The source can be:
 
 - An array: iterates over the array
 - A number: iterates from 0 to n-1
@@ -65,7 +65,7 @@ var s = sequence('A B C D')
 s.tempo(100).start()
 ```
 
-The sequence has the following (chainable) methods:
+The sequence object has the following (chainable) methods:
 
 - __`start(when)`__: starts the sequence when the audio context currentTime is `when`
 - __`stop(when)`__: stops the sequence when audio context currentTime is greater than `when`

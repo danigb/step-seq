@@ -31,7 +31,7 @@ function sequencer (ctx, callback) {
     if (arguments.length === 0) return tempo
     tempo = newTempo
     tickInterval = 60 / tempo
-    lookahead = tickInterval * 0.3
+    lookahead = tickInterval * 0.1
     return sequence
   }
 
